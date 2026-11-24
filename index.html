@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Health Tracker | Daily Wellness & Habits</title>
+  <meta name="description" content="Clean, interactive student health tracking app for water intake, exercise, sleep, and daily wellness planning." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="background-decorations" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="app-layout">
+    <!-- Top Navigation & Header -->
+    <header class="app-header glass">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 7.65l.77.78L12 20.66l7.65-7.65.77-.78a5.4 5.4 0 0 0 0-7.65z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>Student Health Tracker</h1>
+          <p class="subtitle" id="current-date-display">Daily Wellness Dashboard</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="status-pill" id="daily-status-pill">
+          <span class="status-dot"></span>
+          <span id="status-pill-text">Day Not Started</span>
+        </div>
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle light or dark theme" title="Toggle theme">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button id="reset-day-btn" class="icon-btn secondary-btn" aria-label="Reset Day" title="Clear / Reset Day">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Overview Progress Bar -->
+    <section class="overview-banner glass fade-in" id="overview-banner">
+      <div class="overview-info">
+        <div class="progress-ring-container">
+          <svg class="progress-ring" width="76" height="76">
+            <circle class="progress-ring-bg" stroke-width="6" fill="transparent" r="32" cx="38" cy="38" />
+            <circle class="progress-ring-indicator" id="overall-progress-circle" stroke-width="6" fill="transparent" r="32" cx="38" cy="38" />
+          </svg>
+          <span class="progress-percentage" id="overall-progress-text">0%</span>
+        </div>
+        <div class="overview-text">
+          <h2 id="motivation-title">Welcome to Your Health Hub</h2>
+          <p id="motivation-subtitle">Set your daily goals below to generate your personalized wellness checklist.</p>
+        </div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card" id="metric-water-card">
+          <div class="metric-icon water-bg">💧</div>
+          <div class="metric-data">
+            <span class="metric-label">Water</span>
+            <span class="metric-value" id="metric-water-val">0 / 0 gl</span>
+          </div>
+        </div>
+        <div class="metric-card" id="metric-sleep-card">
+          <div class="metric-icon sleep-bg">😴</div>
+          <div class="metric-data">
+            <span class="metric-label">Sleep</span>
+            <span class="metric-value" id="metric-sleep-val">0 / 0 hrs</span>
+          </div>
+        </div>
+        <div class="metric-card" id="metric-exercise-card">
+          <div class="metric-icon exercise-bg">🏃</div>
+          <div class="metric-data">
+            <span class="metric-label">Exercise</span>
+            <span class="metric-value" id="metric-exercise-val">Not Planned</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content: Two Columns on Desktop, Single Column on Mobile -->
+    <main class="main-grid">
+      <!-- Left Column: Daily Planner & Interactive Manual Loggers -->
+      <div class="content-col left-col">
+        <!-- 1. Daily Planner Section -->
+        <section class="card glass fade-in" id="planner-section">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="step-badge">1</span>
+              <div>
+                <h2>Daily Planner</h2>
+                <p class="section-desc">Plan your wellness habits at the start of your day</p>
+              </div>
+            </div>
+            <span class="status-indicator-badge" id="planner-status-badge">Blank</span>
+          </div>
+
+          <form id="planner-form" class="planner-form" novalidate>
+            <!-- Water Goal -->
+            <div class="input-card">
+              <div class="input-header">
+                <label for="water-goal" class="input-label">
+                  <span class="label-icon">💧</span>
+                  <span>Water Intake Goal</span>
+                </label>
+                <span class="unit-tag">glasses (250ml)</span>
+              </div>
+              <div class="input-wrapper">
+                <input type="number" id="water-goal" name="waterGoal" min="1" max="25" placeholder="e.g. 8 glasses" class="form-control" />
+                <div class="quick-preset-chips">
+                  <button type="button" class="preset-btn" data-target="water-goal" data-val="6">6 gl</button>
+                  <button type="button" class="preset-btn" data-target="water-goal" data-val="8">8 gl</button>
+                  <button type="button" class="preset-btn" data-target="water-goal" data-val="10">10 gl</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sleep Goal -->
+            <div class="input-card">
+              <div class="input-header">
+                <label for="sleep-goal" class="input-label">
+                  <span class="label-icon">🌙</span>
+                  <span>Sleep Duration Goal</span>
+                </label>
+                <span class="unit-tag">hours</span>
+              </div>
+              <div class="input-wrapper">
+                <input type="number" id="sleep-goal" name="sleepGoal" min="1" max="16" step="0.5" placeholder="e.g. 8.0 hours" class="form-control" />
+                <div class="quick-preset-chips">
+                  <button type="button" class="preset-btn" data-target="sleep-goal" data-val="7">7 hrs</button>
+                  <button type="button" class="preset-btn" data-target="sleep-goal" data-val="7.5">7.5 hrs</button>
+                  <button type="button" class="preset-btn" data-target="sleep-goal" data-val="8">8 hrs</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exercise Goal -->
+            <div class="input-card">
+              <div class="input-header">
+                <label for="exercise-goal" class="input-label">
+                  <span class="label-icon">⚡</span>
+                  <span>Daily Exercise Goal</span>
+                </label>
+                <span class="unit-tag">activity & duration</span>
+              </div>
+              <div class="input-wrapper">
+                <input type="text" id="exercise-goal" name="exerciseGoal" placeholder="e.g. 30 min morning run or gym workout" class="form-control" maxlength="90" />
+                <div class="quick-preset-chips">
+                  <button type="button" class="preset-text-btn" data-target="exercise-goal" data-val="20 min brisk walk">Walk</button>
+                  <button type="button" class="preset-text-btn" data-target="exercise-goal" data-val="30 min jog / cardio">Jog</button>
+                  <button type="button" class="preset-text-btn" data-target="exercise-goal" data-val="45 min gym workout">Gym</button>
+                  <button type="button" class="preset-text-btn" data-target="exercise-goal" data-val="25 min yoga & stretch">Yoga</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Habit Goal (Optional student habit) -->
+            <div class="input-card">
+              <div class="input-header">
+                <label for="custom-habit-goal" class="input-label">
+                  <span class="label-icon">🎯</span>
+                  <span>Optional Student Focus Habit</span>
+                </label>
+                <span class="unit-tag">custom</span>
+              </div>
+              <div class="input-wrapper">
+                <input type="text" id="custom-habit-goal" name="customHabitGoal" placeholder="e.g. 10 min posture stretch or screen break" class="form-control" maxlength="90" />
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <button type="submit" class="btn primary-btn" id="save-plan-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                <span>Save & Generate Checklist</span>
+              </button>
+              <button type="button" class="btn ghost-btn" id="clear-plan-btn">Clear Form</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Interactive Manual Logging Section (Glasses, Sleep, Workout Tracker) -->
+        <section class="card glass fade-in" id="manual-logger-section">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="step-badge">2</span>
+              <div>
+                <h2>Quick Habit Loggers</h2>
+                <p class="section-desc">Record your actual health intake as you go</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="loggers-stack">
+            <!-- Water Intake Manual Counter -->
+            <div class="logger-box" id="water-logger-box">
+              <div class="logger-head">
+                <div class="logger-title">
+                  <span class="logger-emoji">💧</span>
+                  <div>
+                    <strong>Water Intake Tracker</strong>
+                    <span class="logger-sub" id="water-progress-sub">Log glasses drank today</span>
+                  </div>
+                </div>
+                <div class="counter-badge" id="water-counter-badge">0 gl</div>
+              </div>
+
+              <!-- Interactive Cup Visualiser -->
+              <div class="water-cups-grid" id="water-cups-grid" title="Click any cup to quickly toggle your glasses!">
+                <!-- Populated via JS based on target or standard 8 -->
+              </div>
+
+              <div class="logger-controls">
+                <button type="button" class="btn counter-btn" id="btn-water-minus" aria-label="Decrease water glass">
+                  <span>−</span>
+                </button>
+                <div class="counter-display">
+                  <span id="current-water-count">0</span>
+                  <span class="counter-divider">/</span>
+                  <span id="target-water-count">--</span>
+                  <small>glasses</small>
+                </div>
+                <button type="button" class="btn counter-btn add-btn" id="btn-water-plus" aria-label="Increase water glass">
+                  <span>+</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Sleep Manual Logger -->
+            <div class="logger-box" id="sleep-logger-box">
+              <div class="logger-head">
+                <div class="logger-title">
+                  <span class="logger-emoji">😴</span>
+                  <div>
+                    <strong>Sleep Hours Tracker</strong>
+                    <span class="logger-sub">Log actual duration slept</span>
+                  </div>
+                </div>
+                <div class="counter-badge" id="sleep-counter-badge">0 hrs</div>
+              </div>
+
+              <div class="logger-controls sleep-controls">
+                <button type="button" class="btn counter-btn" id="btn-sleep-minus" aria-label="Decrease sleep hours">
+                  <span>−0.5</span>
+                </button>
+                <div class="counter-display">
+                  <span id="current-sleep-count">0.0</span>
+                  <span class="counter-divider">/</span>
+                  <span id="target-sleep-count">--</span>
+                  <small>hours</small>
+                </div>
+                <button type="button" class="btn counter-btn add-btn" id="btn-sleep-plus" aria-label="Increase sleep hours">
+                  <span>+0.5</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Exercise Activity Logger -->
+            <div class="logger-box" id="exercise-logger-box">
+              <div class="logger-head">
+                <div class="logger-title">
+                  <span class="logger-emoji">🏃</span>
+                  <div>
+                    <strong>Exercise Activity Log</strong>
+                    <span class="logger-sub">Record your completed workout session</span>
+                  </div>
+                </div>
+                <div class="counter-badge" id="exercise-counter-badge">Pending</div>
+              </div>
+
+              <div class="exercise-log-inputs">
+                <input type="text" id="exercise-actual-input" placeholder="e.g. 30 min jog around campus" class="form-control" />
+                <button type="button" class="btn primary-btn small-btn" id="btn-log-exercise">
+                  Log Workout
+                </button>
+              </div>
+              <div id="exercise-logged-display" class="logged-item-pill" style="display: none;">
+                <span class="check-icon">✓</span>
+                <span id="exercise-logged-text">Workout recorded</span>
+                <button type="button" class="remove-logged-btn" id="btn-remove-exercise" title="Remove logged workout">✕</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Interactive Daily Checklist (Pending vs Completed) -->
+      <div class="content-col right-col">
+        <section class="card glass fade-in" id="checklist-section">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="step-badge">3</span>
+              <div>
+                <h2>Daily Checklist</h2>
+                <p class="section-desc">Interactive checklist of completed vs pending items</p>
+              </div>
+            </div>
+            <button type="button" class="btn secondary-btn small-btn" id="open-add-task-modal">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Add Custom Task</span>
+            </button>
+          </div>
+
+          <!-- Filter Navigation Tabs -->
+          <div class="checklist-tabs">
+            <button type="button" class="tab-btn active" data-tab="all">
+              All Tasks (<span id="count-all">0</span>)
+            </button>
+            <button type="button" class="tab-btn" data-tab="pending">
+              Still To Do (<span id="count-pending">0</span>)
+            </button>
+            <button type="button" class="tab-btn" data-tab="completed">
+              Completed (<span id="count-completed">0</span>)
+            </button>
+          </div>
+
+          <!-- Empty State (Shown initially or when everything is cleared) -->
+          <div class="empty-state" id="checklist-empty-state">
+            <div class="empty-state-illustration">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+            </div>
+            <h3>Your Daily Checklist is Blank</h3>
+            <p>Fill out your goals in the Daily Planner on the left, then click <strong>"Save & Generate Checklist"</strong> to begin your day.</p>
+          </div>
+
+          <!-- Two Grouped Interactive Lists: Things To Do & Completed -->
+          <div class="checklist-groups" id="checklist-groups-wrapper" style="display: none;">
+            <!-- Pending Group -->
+            <div class="checklist-group" id="pending-group">
+              <div class="group-header">
+                <span class="group-title">
+                  <span class="group-dot pending-dot"></span>
+                  Things Still To Do
+                </span>
+                <span class="group-badge" id="pending-group-badge">0 items</span>
+              </div>
+              <ul class="task-list" id="pending-task-list">
+                <!-- Injected via JS -->
+              </ul>
+              <div class="empty-group-hint" id="no-pending-hint" style="display: none;">
+                🎉 Awesome! All pending tasks for today are checked off!
+              </div>
+            </div>
+
+            <!-- Completed Group -->
+            <div class="checklist-group" id="completed-group">
+              <div class="group-header">
+                <span class="group-title">
+                  <span class="group-dot completed-dot"></span>
+                  Completed Activities
+                </span>
+                <span class="group-badge" id="completed-group-badge">0 items</span>
+              </div>
+              <ul class="task-list" id="completed-task-list">
+                <!-- Injected via JS -->
+              </ul>
+              <div class="empty-group-hint" id="no-completed-hint" style="display: none;">
+                No activities completed yet. Start checking off your tasks!
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- In-Place Add Custom Task Modal Dialog -->
+  <div class="modal-overlay" id="task-modal-overlay" aria-hidden="true">
+    <div class="modal-card glass" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Custom Health Habit</h3>
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="custom-task-form">
+        <div class="form-group">
+          <label for="custom-task-input">Task / Habit Description</label>
+          <input type="text" id="custom-task-input" class="form-control" placeholder="e.g. 15 min afternoon walk outside" required maxlength="100" />
+        </div>
+        <div class="form-group">
+          <label>Category Tag</label>
+          <div class="category-pill-selector">
+            <label class="cat-pill">
+              <input type="radio" name="task-category" value="💧 Water" />
+              <span>💧 Water</span>
+            </label>
+            <label class="cat-pill">
+              <input type="radio" name="task-category" value="🏃 Exercise" />
+              <span>🏃 Exercise</span>
+            </label>
+            <label class="cat-pill">
+              <input type="radio" name="task-category" value="😴 Sleep" />
+              <span>😴 Sleep</span>
+            </label>
+            <label class="cat-pill">
+              <input type="radio" name="task-category" value="⭐ Wellness" checked />
+              <span>⭐ Wellness</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost-btn" id="modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn primary-btn">Add to Checklist</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container for interactive feedback -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Canvas Confetti Container for celebratory goal completion -->
+  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
